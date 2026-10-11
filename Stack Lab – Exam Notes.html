@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stack Lab – Exam Notes</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f5f1;--card:#fff;--ink:#1d1d1b;--mute:#6b6a64;--line:#e2e0d8;--acc:#2f6fed;--accbg:#e7efff;--hl:#fff3b8;--good:#1f8a4c;--bad:#c93b3b;--code:#f0eee7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15161a;--card:#1f2026;--ink:#ecebe6;--mute:#9a998f;--line:#32333b;--acc:#7aa2ff;--accbg:#27324f;--hl:#5a4d12;--good:#58c98a;--bad:#ff7b7b;--code:#191a1f}}
+:root[data-theme="dark"]{--bg:#15161a;--card:#1f2026;--ink:#ecebe6;--mute:#9a998f;--line:#32333b;--acc:#7aa2ff;--accbg:#27324f;--hl:#5a4d12;--good:#58c98a;--bad:#ff7b7b;--code:#191a1f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:18px 16px 8px;max-width:760px;margin:auto}
+h1{font-size:1.35rem;margin:0}header p{margin:4px 0 0;color:var(--mute);font-size:.9rem}
+nav{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;max-width:760px;margin:auto}
+.tabs button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:99px;font:inherit;font-size:.88rem;cursor:pointer}
+.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.tools{display:flex;gap:8px;max-width:760px;margin:auto;padding:0 16px 10px}
+.tools button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:8px;font:inherit;font-size:.82rem;cursor:pointer}
+.tools button.on{background:var(--good);color:#fff;border-color:var(--good)}
+main{max-width:760px;margin:auto;padding:14px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.card h2{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 8px}
+.big{font-size:1.05rem}
+.mn{background:var(--accbg);border-color:transparent}
+ol.flow{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.flow li{display:flex;gap:10px;padding:9px 8px;border-radius:10px;cursor:pointer;align-items:flex-start}
+ol.flow li:before{counter-increment:s;content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:.78rem;display:grid;place-items:center;margin-top:1px}
+ol.flow li.hl{background:var(--hl)}
+.test ol.flow li span{filter:blur(6px);transition:.2s}.test ol.flow li.rev span{filter:none}
+pre{margin:0;background:var(--code);border-radius:10px;padding:10px 0;overflow-x:auto;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace}
+.ln{display:flex;padding:0 12px;white-space:pre;min-width:max-content}
+.ln i{flex:none;width:22px;font-style:normal;font-size:.7rem;color:#fff;margin-right:8px;align-self:center;text-align:center;border-radius:50%;height:18px;line-height:18px}
+.ln i.b{background:var(--acc)}.ln.hl{background:var(--hl)}
+.cm{color:var(--mute)}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}th{background:var(--code)}
+.scroll{overflow-x:auto}
+ul{margin:0;padding-left:20px}li{margin:3px 0}
+.trap li::marker{color:var(--bad)}
+.pill{display:inline-block;background:var(--code);border-radius:6px;padding:1px 8px;font-size:.82rem;margin-right:4px}
+code{background:var(--code);padding:1px 5px;border-radius:5px;font-size:.88em}
+.hint{font-size:.8rem;color:var(--mute);margin:6px 0 0}
+</style></head><body>
+<header><h1>Stack Lab – Exam Notes</h1><p>Tap a step ➜ its code lights up. Use <b>Test me</b> to hide the steps and recall them in order.</p></header>
+<nav><div class="tabs" id="tabs"></div>
+<div class="tools"><button id="tm">🧠 Test me</button><button id="th">🌓 Theme</button></div></nav>
+<main id="app"></main>
+<script>
+const T=[
+{tab:"1 · Balanced ( )",title:"Task 1 – Balanced Parentheses",
+idea:"Every closing bracket must match the <b>most recent</b> unclosed opening bracket. “Most recent first” = <b>LIFO</b> = Stack.",
+mn:"<b>PUSH opens, POP on close, EMPTY at end.</b> Three fails: close on empty stack · wrong type · leftovers at end.",
+flow:["Create an empty <code>stack&lt;char&gt;</code>.","Loop through every character of the string.","If it is an opening bracket <code>( { [</code> → <b>push</b> it.","If it is a closing bracket <code>) } ]</code> → first check: stack empty? → <b>return false</b>.","Check <code>top</code> matches this closing bracket (<code>isMatching</code>). No → <b>return false</b>.","Match found → <b>pop</b> the top.","Other characters (a, +, 1…) are ignored.","After the loop → <code>return s.empty()</code> (leftover openings = not balanced)."],
+code:String.raw`bool isMatching(char open, char close)
+{
+    if (open == '(' && close == ')') return true;
+    if (open == '{' && close == '}') return true;
+    if (open == '[' && close == ']') return true;
+    return false;
+}
+
+bool isBalanced(string expression)
+{
+    stack<char> s;  §1
+    for (int i = 0; i < expression.length(); i++)  §2
+    {
+        char ch = expression[i];  §2
+        if (ch == '(' || ch == '{' || ch == '[')  §3
+        {
+            s.push(ch);  §3
+        }
+        else if (ch == ')' || ch == '}' || ch == ']')  §4
+        {
+            if (s.empty())  §4
+            {
+                return false;  §4
+            }
+            if (!isMatching(s.top(), ch))  §5
+            {
+                return false;  §5
+            }
+            s.pop();  §6
+        }
+    }
+    return s.empty();  §8
+}
+
+int main()
+{
+    string expression;
+    cout << "Enter an expression: ";
+    getline(cin, expression);   // getline = reads spaces too
+    if (isBalanced(expression))
+        cout << "Expression is Balanced." << endl;
+    else
+        cout << "Expression is NOT Balanced." << endl;
+    return 0;
+}`,
+trace:{h:["Char","Action","Stack (bottom→top)"],r:[["{","push","{"],["[","push","{ ["],["(","push","{ [ ("],[")","top ( matches → pop","{ ["],["]","top [ matches → pop","{"],["}","top { matches → pop","(empty) ✔ Balanced"]],cap:"Input: {[()]}"},
+traps:["<code>(a+b]</code> → top is <code>(</code> but ] arrives → mismatch → NOT balanced.","<code>(a+b</code> → loop ends with <code>(</code> still inside → <code>s.empty()</code> is false.","<code>a+b)</code> → close on empty stack → must check <code>empty()</code> <b>before</b> <code>top()</code> (else crash).","Use <code>getline</code>, not <code>cin &gt;&gt;</code>, so spaces are read."],
+cx:"Time O(n) · Space O(n)"},
+
+{tab:"2 · Two Stacks",title:"Task 2 & 6 – Two Stacks in One Array",
+idea:"Split one array in half. Stack 1 grows <b>left → right</b> in the first half. Stack 2 grows <b>left → right</b> in the second half (starts at <code>mid</code>). They never overlap.<br><small>(Task 6 is the same question – learn this one.)</small>",
+mn:"<b>top1 = −1 · top2 = mid−1.</b> Both are “one before the first slot”. Push = <b>++ then write</b>. Pop = <b>read then −−</b>. Empty → <b>−1</b>.",
+flow:["Class has: <code>arr</code>, <code>size</code>, <code>mid</code>, <code>top1</code>, <code>top2</code>.","Constructor: <code>arr = new int[n]</code>, <code>mid = n/2</code>.","<code>top1 = -1</code> (stack 1 empty, region 0 … mid−1).","<code>top2 = mid-1</code> (stack 2 empty, region mid … size−1).","<b>push1</b>: full if <code>top1 == mid-1</code> → return. Else <code>top1++</code>, <code>arr[top1]=x</code>.","<b>push2</b>: full if <code>top2 == size-1</code> → return. Else <code>top2++</code>, <code>arr[top2]=x</code>.","<b>pop1</b>: empty if <code>top1 == -1</code> → return −1. Else save <code>arr[top1]</code>, <code>top1--</code>, return it.","<b>pop2</b>: empty if <code>top2 == mid-1</code> → return −1. Else save <code>arr[top2]</code>, <code>top2--</code>, return it."],
+code:String.raw`class twoStacks
+{
+    int *arr; int size; int mid; int top1, top2;  §1
+  public:
+    twoStacks(int n)
+    {
+        size = n;
+        arr = new int[n];  §2
+        mid = n / 2;  §2
+        top1 = -1;  §3
+        top2 = mid - 1;  §4
+    }
+    void push1(int x)
+    {
+        if (top1 == mid - 1) return;  §5
+        top1++;  §5
+        arr[top1] = x;  §5
+    }
+    void push2(int x)
+    {
+        if (top2 == size - 1) return;  §6
+        top2++;  §6
+        arr[top2] = x;  §6
+    }
+    int pop1()
+    {
+        if (top1 == -1) return -1;  §7
+        int ele = arr[top1];  §7
+        top1--;  §7
+        return ele;  §7
+    }
+    int pop2()
+    {
+        if (top2 == mid - 1) return -1;  §8
+        int ele = arr[top2];  §8
+        top2--;  §8
+        return ele;  §8
+    }
+};
+
+int main()
+{
+    twoStacks ts(5);
+    ts.push1(2); ts.push1(3); ts.push2(4);
+    cout << ts.pop1() << " " << ts.pop2() << " " << ts.pop2() << " ";
+    return 0;   // prints: 3 4 -1
+}`,
+trace:{h:["Call","top1","top2","Array (size 5, mid 2)"],r:[["start","-1","1","_ _ _ _ _"],["push1(2)","0","1","2 _ _ _ _"],["push1(3)","1","1","2 3 _ _ _"],["push2(4)","1","2","2 3 4 _ _"],["pop1() → 3","0","2","2 _ 4 _ _"],["pop2() → 4","0","1","2 _ _ _ _"],["pop2() → −1","0","1","(empty, top2 = mid−1)"]],cap:"Output: 3 4 -1"},
+traps:["Stack 2 empty condition is <code>mid-1</code>, <b>not</b> −1.","Stack 1 full = <code>mid-1</code>; stack 2 full = <code>size-1</code>.","With size 5: mid = 2 → stack 1 gets slots 0–1, stack 2 gets 2–4.","Full push is silently ignored here (no error message)."],
+cx:"All operations O(1) · Space O(n)"},
+
+{tab:"3 · Remove Pairs",title:"Task 3 – Remove Consecutive Duplicate Pairs",
+idea:"Scan the string; whenever two <b>neighbours are equal</b>, skip both. Rebuild the string. <b>Repeat</b> until a full scan removes nothing.",
+mn:"<b>Scan → skip pair (i++) → rebuild → repeat → empty ⇒ “-1”.</b>",
+flow:["<code>curr = s</code> (working copy).","<code>while(true)</code>: make empty <code>temp</code>, <code>removed = false</code>.","For each <code>i</code>: if <code>curr[i] == curr[i+1]</code> (and i+1 exists) → <code>removed = true</code>, then <code>i++</code> to <b>skip both</b>.","Otherwise → append <code>curr[i]</code> to <code>temp</code>.","After the scan: <code>removed</code> still false? → <b>break</b> (done).","Else <code>curr = temp</code> and scan again.","If <code>curr</code> is empty → return <code>\"-1\"</code>, else return <code>curr</code>."],
+code:String.raw`string removePair(string &s)
+{
+    string curr = s;  §1
+    while (true)  §2
+    {
+        string temp = "";  §2
+        bool removed = false;  §2
+        for (int i = 0; i < curr.length(); i++)
+        {
+            if (i + 1 < curr.length() && curr[i] == curr[i + 1])  §3
+            {
+                removed = true;  §3
+                i++;   // skip the 2nd char of the pair  §3
+            }
+            else
+            {
+                temp += curr[i];  §4
+            }
+        }
+        if (!removed)  §5
+        {
+            break;  §5
+        }
+        curr = temp;  §6
+    }
+    if (curr.empty())  §7
+    {
+        return "-1";  §7
+    }
+    return curr;  §7
+}`,
+trace:{h:["Pass","String in","Result"],r:[["1","aaabbaaccd","a (aa skipped) · a · bb gone · aa gone · cc gone · d → <b>ad</b>"],["2","ad","nothing removed → break"],["—","aaaa","pass 1: aa+aa gone → empty → <b>-1</b>"]],cap:"Input: aaabbaaccd → Output: ad"},
+traps:["Check <code>i+1 &lt; length</code> <b>before</b> <code>curr[i+1]</code> (out of range).","<code>i++</code> inside the if + the loop’s <code>i++</code> = jump 2 characters.","<code>aaa</code> → removes one pair, the third <code>a</code> stays.","Empty result must print <code>\"-1\"</code> (a string), not an empty line."],
+cx:"Time O(n²) worst case · Space O(n)"},
+
+{tab:"4 · Sort Stack",title:"Task 4 – Sort a Stack",
+idea:"Use a <b>second stack (temp)</b> that is always kept sorted. Take each item <code>x</code> from the input, move bigger-than-top items out of the way, drop <code>x</code> in its place.",
+mn:"<b>Pop x → shift SMALLER tops back → push x → dump temp back.</b> The dump reverses order, giving biggest on top.",
+flow:["Make <code>temp</code> stack (empty).","While input <code>st</code> not empty: <code>x = st.top()</code>, then <code>st.pop()</code>.","While <code>temp</code> not empty <b>and</b> <code>temp.top() &lt; x</code> → move that top back to <code>st</code>.","<code>temp.push(x)</code> (x now sits in its correct place).","Repeat until <code>st</code> is empty. (temp: biggest at bottom, smallest on top.)","While <code>temp</code> not empty → move everything back into <code>st</code> (reverses → biggest on top).","main: print by <code>top()</code> then <code>pop()</code> → top→bottom."],
+code:String.raw`void sortStack(stack<int> &st) {
+    stack<int> temp;  §1
+    while (!st.empty()) {  §2
+        int x = st.top();  §2
+        st.pop();  §2
+        while (!temp.empty() && temp.top() < x) {  §3
+            st.push(temp.top());  §3
+            temp.pop();  §3
+        }
+        temp.push(x);  §4
+    }
+    while (!temp.empty()) {  §6
+        st.push(temp.top());  §6
+        temp.pop();  §6
+    }
+}
+
+int main() {
+    stack<int> st;
+    st.push(11); st.push(2); st.push(32); st.push(3); st.push(41);
+    sortStack(st);
+    cout << "[";
+    while (!st.empty()) {
+        cout << st.top();
+        st.pop();
+        if (!st.empty()) cout << ", ";
+    }
+    cout << "]";    // [41, 32, 11, 3, 2]
+    return 0;
+}`,
+trace:{h:["x popped","temp after (bottom→top)"],r:[["41","41"],["3","41 3"],["32","3 moved out → 41 32 → 3 back in later → <b>41 32 3</b>"],["2","41 32 3 2"],["11","2,3 out → 41 32 11 → they return → <b>41 32 11 3 2</b>"],["dump","st = 2,3,11,32,41 (41 on top) → prints [41, 32, 11, 3, 2]"]],cap:"Stack pushed in order 11,2,32,3,41 (41 = top)"},
+traps:["<code>st</code> is passed by <b>reference</b> (<code>&amp;</code>) – that is how it ends up sorted.","Condition is <code>temp.top() &lt; x</code> (strictly smaller moves out).","Flip the <code>&lt;</code> to <code>&gt;</code> and you get smallest on top.","Printing empties the stack."],
+cx:"Time O(n²) · Space O(n)"},
+
+{tab:"5 · Search",title:"Task 5 – Search an Element in a Stack",
+idea:"A stack only shows its <b>top</b>. So: look at top → not it? → pop → look again, until found or empty.",
+mn:"<b>Peek → match? stop : pop → repeat.</b> It <b>destroys</b> the stack.",
+flow:["Push sample values 10, 20, 30, 40 (40 on top).","Read the value to find (<code>cin &gt;&gt; search</code>).","<code>found = false</code>.","While stack not empty: if <code>s.top() == search</code> → <code>found = true</code>, <b>break</b>.","Not equal → <code>s.pop()</code> and loop again.","After loop: print “found” or “not found” using the flag."],
+code:String.raw`stack<int> s;
+int search;
+s.push(10); s.push(20); s.push(30); s.push(40);  §1
+cout << "Enter element to search: ";
+cin >> search;  §2
+bool found = false;  §3
+while (!s.empty()) {  §4
+    if (s.top() == search) {  §4
+        found = true;  §4
+        break;  §4
+    }
+    s.pop();  §5
+}
+if (found)  §6
+    cout << "Element found\n";  §6
+else
+    cout << "Element not found\n";  §6`,
+trace:{h:["Search","Checks (top→bottom)","Result"],r:[["20","40 ✗ → 30 ✗ → 20 ✔","found"],["50","40, 30, 20, 10 all ✗ → empty","not found"]],cap:"Stack: 40 (top), 30, 20, 10"},
+traps:["Elements above the target are <b>popped and lost</b>. Fix: copy to a temp stack and push back.","Stack has no index access – you cannot do <code>s[i]</code>.","Without the <code>found</code> flag you can’t tell why the loop ended."],
+cx:"Time O(n) · Space O(1)"}
+];
+const $=s=>document.querySelector(s),app=$('#app'),tabs=$('#tabs');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function render(i){
+ const t=T[i];
+ const lines=t.code.split('\n').map(l=>{const m=l.match(/\s*§(\d+)\s*$/);return m?[l.replace(/\s*§\d+\s*$/,''),m[1]]:[l,0]});
+ const code=lines.map(([l,s])=>{
+  let h=esc(l).replace(/(\/\/.*)$/,'<span class="cm">$1</span>');
+  return `<div class="ln" data-s="${s}">${s?`<i class="b">${s}</i>`:'<i></i>'}${h||' '}</div>`}).join('');
+ const tr=t.trace;
+ app.innerHTML=`<h2 style="margin:0 0 10px;font-size:1.2rem">${t.title}</h2>
+ <div class="card big"><h2>💡 Big idea</h2>${t.idea}</div>
+ <div class="card mn big"><h2>🧠 Memory hook</h2>${t.mn}</div>
+ <div class="card"><h2>🔢 Flow – learn in this order</h2><ol class="flow">${t.flow.map((f,k)=>`<li data-s="${k+1}"><span>${f}</span></li>`).join('')}</ol><p class="hint">Tap a step to highlight its code. In Test me mode, tap to reveal.</p></div>
+ <div class="card"><h2>💻 Code (numbers = flow step)</h2><pre>${code}</pre></div>
+ <div class="card"><h2>🔍 Dry run</h2><p style="margin:0 0 8px;color:var(--mute)">${tr.cap}</p><div class="scroll"><table><tr>${tr.h.map(h=>`<th>${h}</th>`).join('')}</tr>${tr.r.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div></div>
+ <div class="card trap"><h2>⚠️ Exam traps</h2><ul>${t.traps.map(x=>`<li>${x}</li>`).join('')}</ul><p class="hint"><span class="pill">${t.cx}</span></p></div>`;
+ tabs.querySelectorAll('button').forEach((b,k)=>b.classList.toggle('on',k===i));
+ app.querySelectorAll('ol.flow li').forEach(li=>li.onclick=()=>{
+  const s=li.dataset.s,was=li.classList.contains('hl');
+  app.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
+  li.classList.add('rev');
+  if(!was){li.classList.add('hl');app.querySelectorAll('.ln[data-s="'+s+'"]').forEach(e=>e.classList.add('hl'))}
+ });
+ window.scrollTo(0,0);
+}
+T.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t.tab;b.onclick=()=>render(i);tabs.appendChild(b)});
+$('#tm').onclick=e=>{const on=app.classList.toggle('test');e.target.classList.toggle('on',on);app.querySelectorAll('.rev').forEach(x=>x.classList.remove('rev'))};
+$('#th').onclick=()=>{const r=document.documentElement,d=getComputedStyle(r).getPropertyValue('--bg').trim()==='#15161a';r.dataset.theme=d?'light':'dark'};
+render(0);
+</script></body></html>
